@@ -98,13 +98,19 @@ ggplot(noCanData, aes(y=Earnings, x=factor(Education, level=level_order), shape=
   geom_point(alpha=0.01, size=4, aes(x = "Bachelor's degree", y = 54259+19110, color = "Ont", shape = "Male")) +
   theme_calc()
 
+aic.list <- list(model1, model2, model3, model4, model5)
+aic.names <- c("model1", "model2", "model3", "model4", "model5")
+aictab(aic.list, modnames = aic.names)
+
+
+par(mfrow = c(2,2))
+plot(model4)
+
+plot(predict.glm(model1, type = "link"), residuals.glm(model1, "deviance"), xlab="Linear Predictor",
+     ylab="deviance residuals", main = "Linear predictor vs Deviance Residuals")
 
 
 
-
-
-
-  
 
 model <- glm(Earnings ~ factor(Gender) + factor(Education), data = data)
 
@@ -117,7 +123,21 @@ onlyUniData[onlyUniData == "High school diploma"] <- "Not"
 onlyUniData[onlyUniData == "Apprenticeship certificate"] <- "Not"
 onlyUniData[onlyUniData == "College diploma"] <- "Not"
 
-onlyUniModel <- glm(Earnings ~ factor(Gender)*factor(Education), data = onlyUniData)
+
+
+onlyUniModel1 <- glm(Earnings ~ factor(Gender)+factor(Education), data = onlyUniData)
+onlyUniModel2 <- glm(Earnings ~ factor(Gender)*factor(Education), data = onlyUniData)
+
+anova(onlyUniModel2, onlyUniModel1, test="Chisq")
+
+aic.list <- list(onlyUniModel1, onlyUniModel2)
+aic.names <- c("onlyUniModel1", "onlyUniModel2")
+aictab(aic.list, modnames = aic.names)
+
+
+
+
+
 
 
 anova(modelEdMale, modelEdFemale, test="LR")
